@@ -13,6 +13,10 @@ socket.on('updateMessage', function(data){
         var info = document.getElementById('info');
         info.innerHTML = data.message;
 
+        setTimeout(() => {
+            info.innerText = '';
+        }, 1000);
+
     }else{
         var chatMessageEl = drawChatMessage(data);
         chatWindow.appendChild(chatMessageEl);
