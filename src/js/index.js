@@ -16,31 +16,26 @@ socket.on('updateMessage', function(data){
     }else{
         var chatMessageEl = drawChatMessage(data);
         chatWindow.appendChild(chatMessageEl);
+
+        chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 });
 
 function drawChatMessage(data){
     var wrap = document.createElement('p');
     var message = document.createElement('span');
-    
-    // 1.
-    if(data.name === 'SERVER') {
-        wrap.classList.add('output__server');
-    
-    }else{
-        var name = document.createElement('span');
+    var name = document.createElement('span');
 
-        name.innerText = data.name;
-        name.classList.add('output__user__name');
-
-        wrap.classList.add('output__user');
-        wrap.dataset.id = socket.id;
-        wrap.appendChild(name);
-    }
-
+    name.innerText = data.name;
     message.innerText = data.message;
+
+    name.classList.add('output__user__name');
     message.classList.add('output__user__message');
 
+    wrap.classList.add('output__user');
+    wrap.dataset.id = socket.id;
+
+    wrap.appendChild(name);
     wrap.appendChild(message);
 
     return wrap;
