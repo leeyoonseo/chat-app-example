@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <link rel="stylesheet" href="./css/index.css">
-    
+
     <title>chat-app</title>
 </head>
 <body>
-    <div class="app__wrap">
+
+    <div id="app" class="app__wrap">
         <div id="info" class="app__info"></div>
 
         <div id="chatWindow" class="app__window"></div>
@@ -19,7 +21,25 @@
             <button id="chatMessageSendBtn" class="app__button">전송</button>
         </div>
     </div>
-<script src="/socket.io/socket.io.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
 </body>
 </html>
+
+<!-- 
+    [TODO]
+    - es6 사용
+    - 압축 난독화 자동화
+
+    기능
+    - 텍스트 검색
+    - 닉네임 방식 변경
+    - 엔터로 메시지 발송
+    - 본인 메세지 style추가
+    - 메뉴바생성
+        ㄴ 현재 인원 정보
+        ㄴ 닉네임변경
+        ㄴ 귓속말, 해당사람 글 차단
+        ㄴ 대화저장
+ -->
