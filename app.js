@@ -6,8 +6,19 @@ const fs = require('fs');
 const io = require('socket.io')(server);
 
 app.use(express.static('src'));
+app.get('/', (req, res) => handlerRouting(res));
 
-app.get('/', function(req, res){
+io.sockets.on('connection', socket => {
+    socket.on('newUserConnect', name => handlerNewUserConnect(socket, name));
+    socket.on('disconnect', () => handlerDisConnect(socket));
+    socket.on('sendMessage', data => handlerSendMessage(socket, data));
+});
+
+server.listen(8080, () => {
+    console.log('서버 실행');
+});
+
+function handlerRouting(res){
     fs.readFile('./src/index.html', (err, data) => {
         if(err) throw err;
 
@@ -17,31 +28,30 @@ app.get('/', function(req, res){
         .write(data)
         .end();
     });
-});
+}
 
-io.sockets.on('connection', function(socket){
-    socket.on('newUserConnect', function(name){
-        socket.name = name;
+function handlerNewUserConnect(socket, name){
+    socket.name = name;
 
-        io.sockets.emit('updateMessage', {
-            name : 'SERVER',
-            message : name + '님이 접속했습니다.'
-        });
-    });
+    var data = {
+        name : 'SERVER',
+        message : name + '님이 접속했습니다.'
+    };
 
-    socket.on('disconnect', function(){
-        io.sockets.emit('updateMessage', {
-            name : 'SERVER',
-            message : socket.name + '님이 퇴장했습니다.'
-        });
-    });
+    io.sockets.emit('updateMessage', data);
+}
 
-    socket.on('sendMessage', function(data){
-        data.name = socket.name;
-        io.sockets.emit('updateMessage', data);
-    });
-});
+function handlerDisConnect(socket){
+    var data = {
+        name : 'SERVER',
+        message : socket.name + '님이 퇴장했습니다.'
+    };
+    
+    io.sockets.emit('updateMessage', data);
+}
 
-server.listen(8080, function(){
-    console.log('서버 실행중...');
-});
+function handlerSendMessage(socket, data){
+    data.name = socket.name;
+    data.id = socket.id;
+    io.sockets.emit('updateMessage', data);
+}

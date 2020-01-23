@@ -1,61 +1,83 @@
-'use strict';
+(function(){
+    'use strict';
 
-var socket = io();
+    var socket = io();
+    var chatWindow = document.getElementById('chatWindow');
+    var sendButton = document.getElementById('chatMessageSendBtn');
+    var chatInput = document.getElementById('chatInput');
 
-socket.on('connect', function(){
-    var name = prompt('대화명을 입력해주세요.', '');
-    socket.emit('newUserConnect', name);
-});
-
-var chatWindow = document.getElementById('chatWindow');
-socket.on('updateMessage', function(data){
-    if(data.name === 'SERVER'){
-        var info = document.getElementById('info');
-        info.innerHTML = data.message;
-
-        setTimeout(() => {
-            info.innerText = '';
-        }, 1000);
-
-    }else{
-        var chatMessageEl = drawChatMessage(data);
-        chatWindow.appendChild(chatMessageEl);
-
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-});
-
-function drawChatMessage(data){
-    var wrap = document.createElement('p');
-    var message = document.createElement('span');
-    var name = document.createElement('span');
-
-    name.innerText = data.name;
-    message.innerText = data.message;
-
-    name.classList.add('output__user__name');
-    message.classList.add('output__user__message');
-
-    wrap.classList.add('output__user');
-    wrap.dataset.id = socket.id;
-
-    wrap.appendChild(name);
-    wrap.appendChild(message);
-
-    return wrap;
-}
-
-
-var sendButton = document.getElementById('chatMessageSendBtn');
-var chatInput = document.getElementById('chatInput');
-
-sendButton.addEventListener('click', function(){
-    var message = chatInput.value;
-    if(!message) return false;
-    
-    socket.emit('sendMessage', {
-        message
+    socket.on('connect', handlerConnect);
+    socket.on('updateMessage', function(data){
+        handlerUpdateMessage(data);
     });
+    sendButton.addEventListener('click', handlerSendClick);
 
-    chatInput.value = '';
-});
+
+    function handlerConnect(){
+        var name = prompt('대화명을 입력해주세요.', '');
+
+        socket.emit('newUserConnect', name);
+    }
+
+    function handlerUpdateMessage(data){
+        console.log(data);
+        if(data.name === 'SERVER'){
+            var info = document.getElementById('info');
+            info.innerHTML = data.message;
+
+            setTimeout(() => {
+                info.innerText = '';
+            }, 1000);
+
+        }else{
+            var chatMessageEl = drawChatMessage(data);
+            chatWindow.appendChild(chatMessageEl);
+
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    }
+    function handlerSendClick(){
+        var message = chatInput.value;
+        if(!message) return false;
+        
+        socket.emit('sendMessage', {
+            message
+        });
+
+        chatInput.value = '';
+    }
+
+    function drawChatMessage(data){
+        var wrap = document.createElement('p');
+        var message = document.createElement('span');
+        var name = document.createElement('span');
+
+        var wrapClassStr = 'output__user';
+        var nameClassStr = 'output__user__name';
+        var messageClassStr = 'output__user__message';
+
+        name.innerText = data.name;
+        message.innerText = data.message;
+
+        if(data.id === socket.id){
+            wrapClassStr = 'output__me';
+            nameClassStr = 'output__me__name';
+            messageClassStr = 'output__me__message';
+
+            wrap.appendChild(message);
+            wrap.appendChild(name);
+
+        }else{
+            wrap.appendChild(name);
+            wrap.appendChild(message);
+        }
+
+        name.classList.add(nameClassStr);
+        message.classList.add(messageClassStr);
+        wrap.classList.add(wrapClassStr);
+        wrap.dataset.id = socket.id;
+
+        return wrap;
+    }
+})();
+
