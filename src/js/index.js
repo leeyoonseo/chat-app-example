@@ -14,6 +14,32 @@
 
 
     function handlerConnect(){
+        const options = {
+            customButton : true,
+            customButtonData : [
+                {
+                    type : 'button',
+                    label : '접속',
+                    event : function(){
+                        const {content} = this.LayerPopup;
+                        console.log('접속');
+                    }
+                },
+                {
+                    type : 'button',
+                    label : '나가기',
+                    event : function(){
+                        const {content} = this.LayerPopup;
+                        console.log('나가기');
+                        
+                    }
+                }
+            ]
+        };
+
+        const getNamePopup = new LayerPopup(options);
+        getNamePopup.open();
+
         var name = prompt('대화명을 입력해주세요.', '');
 
         socket.emit('newUserConnect', name);
