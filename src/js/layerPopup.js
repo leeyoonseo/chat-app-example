@@ -1,6 +1,8 @@
 /**
  * Layer Popup
  * @author yoonseo.lee(2019.11)
+ * [TODO]
+ * 가운데 기준 컨테이너 설정기능
  */
 class LayerPopup{
 

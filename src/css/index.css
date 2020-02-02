@@ -140,3 +140,8 @@
     box-sizing: border-box;
     cursor: pointer;
 }
+
+/* LayerPopup custom */
+.popup_wrap.on{
+    position:absolute;
+}
