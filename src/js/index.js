@@ -1,24 +1,37 @@
+/**
+ * Chat app JS
+ * @author Yoonseo.lee <okayoon.lee@gmail.com>
+ * @since 2020.01
+ * @version 1.0.0
+ * @copyright Yoonseo 2020.01
+ * @todo es6 사용, 압축 난독화 자동화
+ * @todo 라우터(종료페이지)
+ * @todo 텍스트 검색
+ * @todo 닉네임 방식 변경
+ * @todo 엔터로 메시지 발송
+ * @todo 본인 메세지 style추가
+ * @todo 메뉴바생성 - 현재 인원 정보 - 닉네임변경 - 귓속말, 해당사람 글 차단 - 대화저장
+ */
 (function(){
+
+    // import { chatAppConnect } from './chatApp.js'
 
     const socket = io();
     const chatWindow = document.getElementById('chatWindow');
     const sendButton = document.getElementById('chatMessageSendBtn');
     const chatInput = document.getElementById('chatInput');
 
-    socket.on('connect', handlerConnect);
+    socket.on('connect', chatAppConnect);
+
     socket.on('updateMessage', function(data){
         handlerUpdateMessage(data);
     });
+
     sendButton.addEventListener('click', handlerSendClick);
 
 
-    
-
-    function handlerConnect(){
+    function chatAppConnect(){
         getUserName();
-
-        
-
     }
 
     function handlerUpdateMessage(data){
@@ -36,6 +49,7 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
     }
+
     function handlerSendClick(){
         var message = chatInput.value;
         if(!message) return false;
@@ -100,6 +114,7 @@
             appendPosition : '#app',
             title : 'chat-app',
             content : inputObj,
+            expire : false,
             customButton : true,
             customButtonData : [
                 {
@@ -114,7 +129,7 @@
                 }
             ]
         })
-        .open();
+        popup.open();
 
         function nextStep(popup, data){
             socket.emit('newUserConnect', data);
